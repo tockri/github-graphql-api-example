@@ -1,35 +1,20 @@
 // リポジトリ詳細取得
 import {gql, useQuery} from "@apollo/client";
+import {Repository} from "../model/repository";
+import {IssueSummary} from "../model/issue";
+import {PageInfo} from "./index";
 
-export type IssueSummary = {
-  id: string
-  title: string
-  url: string
-  body: string
-}
-export type PageInfo = {
-  startCursor: string
-  hasNextPage: boolean
-  endCursor: string
-}
-export type RepositoryWithIssues = {
-  node: {
-    id: string
-    name: string
-    url: string
-    viewerHasStarred: boolean
-    stargazers: {
-      totalCount: number
-    }
+export type RepositoryWithIssuesResponse = {
+  node: Repository & {
     issues: {
-      edges: [
+      edges: {
         node: IssueSummary
-      ]
+      }[]
       pageInfo: PageInfo
     }
   }
 }
-export const GetRepositoryWithIssuesQuery = gql`
+export const repositoryWithIssuesQuery = gql`
   query ($id: ID!, $limit: Int, $cursor: String) {
     node(id: $id) {
       ... on Repository {
@@ -68,7 +53,7 @@ export type RepositoryWithIssuesQueryParam = {
   limit: number
 }
 export const useRepositoryWithIssuesQuery = (param: RepositoryWithIssuesQueryParam) =>
-    useQuery<RepositoryWithIssues>(GetRepositoryWithIssuesQuery, {
+    useQuery<RepositoryWithIssuesResponse>(repositoryWithIssuesQuery, {
       variables: {id: param.repositoryId, limit: param.limit},
       fetchPolicy: 'no-cache'
     })

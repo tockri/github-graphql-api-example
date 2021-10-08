@@ -1,10 +1,10 @@
 import type {NextPage} from 'next'
 import Link from 'next/link'
 import * as React from 'react';
-import {GetRepositoriesResponse, useRepositoriesQuery} from "../graphql/repositories";
+import {RepositoriesResponse, useRepositoriesQuery} from "../graphql/repositories";
 import {DataProps, onLoaded} from "../components/QueryHelper";
 
-const RepoList: React.FC<DataProps<GetRepositoriesResponse>> = (props) => {
+const RepoList: React.FC<DataProps<RepositoriesResponse>> = (props) => {
   const repositories = props.data.viewer.repositories.nodes
   return <>
     <ul>

@@ -1,16 +1,8 @@
 import {gql, useQuery} from "@apollo/client";
+import {RepositorySummary} from "../model/repository";
 
-export type RepositorySummary = {
-  id: string
-  name: string
-  url: string
-  viewerHasStarred: boolean
-  stargazers: {
-    totalCount: number
-  }
-}
 
-export type GetRepositoriesResponse = {
+export type RepositoriesResponse = {
   viewer: {
     repositories: {
       nodes: RepositorySummary[]
@@ -19,7 +11,7 @@ export type GetRepositoriesResponse = {
 }
 
 // リポジトリ取得
-export const GetRepositoriesQuery = gql`
+export const repositoriesQuery = gql`
   query {
     viewer {
       repositories(
@@ -40,4 +32,4 @@ export const GetRepositoriesQuery = gql`
     }
   }
 `
-export const useRepositoriesQuery = () => useQuery<GetRepositoriesResponse>(GetRepositoriesQuery)
+export const useRepositoriesQuery = () => useQuery<RepositoriesResponse>(repositoriesQuery)

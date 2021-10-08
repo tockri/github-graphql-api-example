@@ -2,23 +2,27 @@ import type {NextPage} from 'next'
 
 import * as React from 'react';
 import {
-  RepositoryWithIssues,
+  RepositoryWithIssuesResponse,
   useRepositoryWithIssuesQuery
 } from "../../../graphql/repositoryWithIssues";
 import {DataProps, onLoaded} from "../../../components/QueryHelper";
+import {RepositoryDetail} from '../../../components/repository/RepositoryDetail'
 import {useRouter} from "next/router";
 import Link from 'next/link';
+import {IssueItem} from "../../../components/issue/IssueItem";
 
-const Repository = (props: DataProps<RepositoryWithIssues>) => {
-  const repository = props.data.node
+const Repository = (props: DataProps<RepositoryWithIssuesResponse>) => {
   return <>
-    <div>
-      <Link href={'../..'}>Home</Link>
-    </div>
-    <h2>Repository</h2>
-    <div>id: {repository.id}</div>
-    <div>name: {repository.name}</div>
+    <Link href="../..">Home</Link>
+    <RepositoryDetail repository={props.data.node}/>
     <h3>Issues</h3>
+    <ul>
+      {props.data.node.issues.edges.map((n) => n.node).map((issue) =>
+          <li key={issue.id}>
+            <IssueItem issue={issue}/>
+          </li>
+      )}
+    </ul>
   </>
 }
 

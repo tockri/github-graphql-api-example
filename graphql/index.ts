@@ -5,6 +5,14 @@ export type OnErrorProps = {
   error: ApolloError
 }
 
+
+export type PageInfo = {
+  startCursor: string
+  hasNextPage: boolean
+  endCursor: string
+}
+
+
 export const ADD_STAR_REPOSITORY = gql`
   mutation ($id: ID!) {
     addStar(input: { starrableId: $id }) {
