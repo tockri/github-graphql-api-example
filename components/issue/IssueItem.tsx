@@ -10,6 +10,6 @@ export const IssueItem: React.FC<IssueItemParam> = (props) => {
   return <>
     <div>id: {issue.id}</div>
     <div>title: {issue.title}</div>
-    <div>url: <a href={issue.url} target="_blank">{issue.url}</a></div>
+    <div>url: <a href={issue.url} target="_blank" rel="noreferrer">{issue.url}</a></div>
   </>
 }

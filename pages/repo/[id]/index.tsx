@@ -26,14 +26,14 @@ const Repository = (props: DataProps<RepositoryWithIssuesResponse>) => {
   </>
 }
 
-const RepositoryPage: NextPage = (props) => {
+const RepositoryPage: NextPage = () => {
   const router = useRouter()
   const repositoryId = router.query.id as string
-  const {loading, error, data, refetch, fetchMore} = useRepositoryWithIssuesQuery({
+  const result = useRepositoryWithIssuesQuery({
     repositoryId,
     limit: 3
   })
-  return onLoaded(Repository)(loading, error, data)
+  return onLoaded(Repository)(result.loading, result.error, result.data)
 }
 
 export default RepositoryPage

@@ -4,6 +4,7 @@ import axios from "axios";
 import Config from "./_config";
 
 // Github GraphQLへのアクセスプロキシ
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 const handler = async (
     proxyRequest: NextApiRequest,
     proxyResponse: NextApiResponse

@@ -11,6 +11,7 @@ const apolloClient = new ApolloClient({
   ssrMode: false,
 });
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 const Global = ({Component, pageProps}: AppProps) =>
     <ApolloProvider client={apolloClient}>
       <Component {...pageProps} />

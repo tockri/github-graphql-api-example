@@ -4,6 +4,7 @@ module.exports = {
     'plugin:react/recommended',
     'plugin:@typescript-eslint/recommended',
     'prettier',
+    'next'
   ],
   plugins: ['react', '@typescript-eslint'],
   overrides: [
