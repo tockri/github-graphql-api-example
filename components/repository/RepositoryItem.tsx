@@ -5,25 +5,23 @@ import {SxProps} from "@mui/system";
 
 export type RepositoryItemProps = {
   repository: Repository,
-  clickable: boolean
+  onSelect?: (repositoryId:string) => void
 }
 
 const RootSx = (props:RepositoryItemProps): SxProps => ({
   bgcolor: 'text.secondary',
   color: 'background.paper',
-  marginX: 0,
-  marginY: 2,
   padding: 2,
   borderRadius: 1,
-  cursor: props.clickable ? 'pointer' : 'inherit'
+  cursor: props.onSelect ? 'pointer' : 'inherit'
 })
 
 export const RepositoryItem: React.FC<RepositoryItemProps> = (props) => {
-  const {repository} = props
-  const onClick = () => {
-    alert('onClick')
-  }
-  return <Box sx={RootSx(props)} onClick={props.clickable ? onClick : undefined}>
+  const {repository, onSelect} = props
+  const onClick = onSelect ? () => {
+    onSelect(repository.id)
+  } : undefined
+  return <Box sx={RootSx(props)} onClick={onClick}>
     {repository.name}
   </Box>
 }
