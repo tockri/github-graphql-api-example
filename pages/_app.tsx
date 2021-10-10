@@ -3,6 +3,7 @@ import type {AppProps} from 'next/app'
 
 import * as React from 'react';
 import {ApolloClient, ApolloProvider, InMemoryCache} from '@apollo/client';
+import {RecoilRoot} from "recoil";
 
 // GraphQL クライアントを生成
 const apolloClient = new ApolloClient({
@@ -14,7 +15,9 @@ const apolloClient = new ApolloClient({
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 const Global = ({Component, pageProps}: AppProps) =>
     <ApolloProvider client={apolloClient}>
-      <Component {...pageProps} />
+      <RecoilRoot>
+        <Component {...pageProps} />
+      </RecoilRoot>
     </ApolloProvider>
 
 export default Global

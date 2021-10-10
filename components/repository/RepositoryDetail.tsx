@@ -12,5 +12,6 @@ export const RepositoryDetail: React.FC<RepositoryDetailProps> = (props) => {
     <div>id: {repository.id}</div>
     <div>name: {repository.name}</div>
     <div>url: <a href={repository.url} target="_blank" rel="noreferrer">{repository.url}</a></div>
+    <div>desc: {repository.description}</div>
   </>
 }

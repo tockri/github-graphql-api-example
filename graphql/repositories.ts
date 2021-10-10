@@ -23,6 +23,7 @@ export const repositoriesQuery = gql`
           id
           name
           url
+          description
           viewerHasStarred
           stargazers {
             totalCount
