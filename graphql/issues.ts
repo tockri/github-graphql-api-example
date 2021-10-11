@@ -14,15 +14,6 @@ export type IssuesResponse = {
   }
 }
 
-export const emptyIssuesResponse: IssuesResponse = {
-  node: {
-    issues: {
-      edges: [],
-      pageInfo: emptyPageInfo
-    }
-  }
-}
-
 export const issuesInRepositoryQuery = gql`
   query ($repositoryId: ID!, $limit: Int, $cursor: String) {
     node(id: $repositoryId) {

@@ -9,13 +9,13 @@ export type OnErrorProps = {
 export type PageInfo = {
   startCursor: string
   hasNextPage: boolean
-  endCursor: string
+  endCursor: string | null
 }
 
 export const emptyPageInfo: PageInfo = {
   startCursor: "",
-  hasNextPage: false,
-  endCursor: ""
+  hasNextPage: true,
+  endCursor: null
 }
 
 export const ADD_STAR_REPOSITORY = gql`

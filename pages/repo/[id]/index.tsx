@@ -4,21 +4,17 @@ import * as React from 'react';
 import {useRouter} from "next/router";
 import {useRecoilState, useRecoilValue} from "recoil";
 import {
-  issueListState,
-  issuesResponseState, mergeIssuesResponseState,
   selectedRepositoryIdState,
-  selectedRepositoryState
+  selectedRepositoryState,
+  useIssueListState
 } from "../../../recoil/states";
 import {RepositoryItem} from "../../../components/repository/RepositoryItem";
 import {PageRoot} from '../../../components/layout/PageRoot';
 import Box, {BoxProps} from "@mui/material/Box";
 import {Breadcrumbs, Button} from "@mui/material";
-import {useIssuesInRepositoryQuery} from "../../../graphql/issues";
-import {LoadingWrapper} from "../../../components/QueryHelper";
+import {Loading} from "../../../components/QueryHelper";
 import {IssueItem} from "../../../components/issue/IssueItem";
 import {SxProps} from "@mui/system";
-import {node} from "prop-types";
-import {emptyPageInfo} from "../../../graphql";
 import {useApolloClient} from "@apollo/client";
 
 type IssueListProps = {
@@ -31,33 +27,22 @@ const issueListItemStyle: SxProps = {
 
 const IssueList: React.FC<IssueListProps> = (props) => {
   const {repositoryId} = props
-  const [resp, setResponse] = useRecoilState(issuesResponseState)
-  const {loading, error, fetchMoreIssues} = useIssuesInRepositoryQuery({repositoryId: repositoryId, limit: 3, cursor: null}, {
-    onCompleted: setResponse
-  })
   const client = useApolloClient()
-  const issueList = useRecoilValue(issueListState(client))
-  const onclick = () => {
-    fetchMoreIssues((newResponse) => {
-      setResponse((currVal) => mergeIssuesResponseState(currVal, newResponse))
-    })
-  }
+  const {loading, state, fetchMore} = useIssueListState(repositoryId, 2)
 
-  return <LoadingWrapper loading={loading} error={error}>
-    <Box sx={{marginTop: 2}}>
-      {issueList.issues.map(issue =>
-        <Box sx={issueListItemStyle} key={issue.id}>
-          <IssueItem issue={issue}/>
-        </Box>
-      )}
-      {issueList.pageInfo.hasNextPage
-        ? <Button onClick={onclick}>more</Button>
-        : null
-      }
-
-    </Box>
-  </LoadingWrapper>
-
+  return loading
+      ? <Loading/>
+      : <Box sx={{marginTop: 2}}>
+        {state.issues.map(issue =>
+            <Box sx={issueListItemStyle} key={issue.id}>
+              <IssueItem issue={issue}/>
+            </Box>
+        )}
+        {state.pageInfo.hasNextPage
+            ? <Button onClick={fetchMore}>more</Button>
+            : null
+        }
+      </Box>
 }
 
 const homeLinkSx: SxProps = {
