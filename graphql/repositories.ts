@@ -1,11 +1,11 @@
 import {gql, QueryHookOptions, useQuery} from "@apollo/client";
-import {RepositorySummary} from "../model/repository";
+import {Repository} from "../model/repository";
 
 
 export type RepositoriesResponse = {
   viewer: {
     repositories: {
-      nodes: RepositorySummary[]
+      nodes: Repository[]
     }
   }
 }
@@ -41,4 +41,5 @@ export const repositoriesQuery = gql`
     }
   }
 `
+
 export const useRepositoriesQuery = (options?:QueryHookOptions) => useQuery<RepositoriesResponse>(repositoriesQuery, options)

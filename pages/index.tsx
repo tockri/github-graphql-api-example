@@ -1,63 +1,24 @@
 import type {NextPage} from 'next'
 import * as React from 'react';
-import {
-  emptyRepositoriesResponse,
-  RepositoriesResponse,
-  useRepositoriesQuery
-} from "../graphql/repositories";
+import {useEffect} from 'react';
+import {useRepositoriesQuery} from "../graphql/repositories";
 import {LoadingWrapper} from "../components/QueryHelper";
 import Box from "@mui/material/Box";
 import {RepositoryItem} from "../components/repository/RepositoryItem";
 import {PageRoot} from "../components/layout/PageRoot";
-import {atom, selector, useRecoilState, useRecoilValue} from "recoil";
-import {Repository} from "../model/repository";
+import {useRecoilState, useRecoilValue} from "recoil";
 import {styled} from "@mui/material/styles";
-import {Button} from "@mui/material";
-import {useEffect} from "react";
+import {Breadcrumbs, Button} from "@mui/material";
 import {useRouter} from "next/router";
-
-type RepositoryItemState = {
-  repository: Repository
-  visible: boolean
-}
-
-type RepoListState = {
-  items: RepositoryItemState[]
-  selectedId: string
-}
-
-const selectedRepositoryIdState = atom<string>({
-  key: 'selectedRepositoryIdState',
-  default: ''
-})
-
-const repositoriesResponseState = atom<RepositoriesResponse>({
-  key: 'repositoriesResponse',
-  default: emptyRepositoriesResponse
-})
-
-const repoListState = selector<RepoListState>({
-  key: 'repoListState',
-  get: ({get}) => {
-    const resp = get(repositoriesResponseState)
-    const selectedId = get(selectedRepositoryIdState)
-    return {
-      items: resp.viewer.repositories.nodes.map(repo => ({
-        repository: repo,
-        visible: !selectedId || repo.id === selectedId
-      })),
-      selectedId: selectedId
-    }
-  }
-})
+import {repoListState, repositoriesResponseState, selectedRepositoryIdState} from "../recoil/states";
 
 const ListItem = styled(Box)`
-  transition: max-height 0.8s ease-in-out, margin-bottom 0.8s ease-in-out, opacity 0.4s ease-in-out; 
+  transition: max-height 0.5s ease-in-out, margin-bottom 0.5s ease-in-out, opacity 0.2s ease-in-out; 
  
   overflow: hidden;
   &.extended {
     opacity: 1;
-    max-height: 56px;
+    max-height: 100px;
     margin-bottom: 1em;
   }
   &.collapsed {
@@ -83,14 +44,13 @@ const RepoList: React.FC = () => {
   const router = useRouter()
   useEffect(() => {
     if (selectedId !== '')
-      setTimeout(() => {router.push(`/repo/${selectedId}`)}, 800)
-  }, [selectedId])
+      setTimeout(() => {
+        router.push(`/repo/${selectedId}`)
+      }, 500)
+  }, [selectedId, router])
+
   return <Box>
-    {selectedId !== ''
-        ? <HomeButton variant='contained'
-                onClick={() => setSelectedId('')}
-    >Home</HomeButton>
-        : <Box sx={{marginTop: '2em'}}/>}
+    <Breadcrumbs sx={{marginBottom: 2}}><Box>Home</Box></Breadcrumbs>
     {state.items.map((repo) =>
         <ListItem key={repo.repository.id} className={repo.visible ? 'extended' : 'collapsed'}>
           <RepositoryItem repository={repo.repository} onSelect={setSelectedId}/>

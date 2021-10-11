@@ -10,7 +10,7 @@ export type RepositoryItemProps = {
 
 const RootSx = (props:RepositoryItemProps): SxProps => ({
   bgcolor: 'text.secondary',
-  color: 'background.paper',
+  color: 'white',
   padding: 2,
   borderRadius: 1,
   cursor: props.onSelect ? 'pointer' : 'inherit'
@@ -23,5 +23,6 @@ export const RepositoryItem: React.FC<RepositoryItemProps> = (props) => {
   } : undefined
   return <Box sx={RootSx(props)} onClick={onClick}>
     {repository.name}
+    <Box sx={{color: '#e0e0e0', fontSize: 'smaller'}}>{repository.description}</Box>
   </Box>
 }

@@ -12,6 +12,11 @@ export type PageInfo = {
   endCursor: string
 }
 
+export const emptyPageInfo: PageInfo = {
+  startCursor: "",
+  hasNextPage: false,
+  endCursor: ""
+}
 
 export const ADD_STAR_REPOSITORY = gql`
   mutation ($id: ID!) {
