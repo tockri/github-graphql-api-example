@@ -1,13 +1,8 @@
 import React from "react";
 import {AppBar, Toolbar, Typography} from "@mui/material";
 import Box from "@mui/material/Box";
-import {styled} from "@mui/material/styles";
 import Container from "@mui/material/Container";
 
-
-const MainSection = styled(Container)`
-  padding: 18px 0;
-`
 
 export const PageRoot: React.FC = (props) => {
   const {children} = props
@@ -21,8 +16,8 @@ export const PageRoot: React.FC = (props) => {
         </Toolbar>
       </AppBar>
     </Box>
-    <MainSection>
+    <Container sx={{paddingTop: 2}}>
       {children}
-    </MainSection>
+    </Container>
   </>
 }
