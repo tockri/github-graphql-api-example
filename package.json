@@ -12,6 +12,8 @@
     "@apollo/client": "^3.4.16",
     "@emotion/react": "^11.4.1",
     "@emotion/styled": "^11.3.0",
+    "@mui/icons-material": "^5.0.3",
+    "@mui/lab": "^5.0.0-alpha.50",
     "@mui/material": "^5.0.3",
     "@types/recoil": "^0.0.9",
     "axios": "^0.22.0",

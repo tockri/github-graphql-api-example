@@ -4,3 +4,10 @@ export type Issue = {
   url: string
   body: string
 }
+
+export const emptyIssue = {
+  id: "",
+  title: "",
+  url: "",
+  body: ""
+}

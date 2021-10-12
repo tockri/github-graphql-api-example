@@ -1,10 +1,10 @@
 // リポジトリ詳細取得
-import {empty, gql, OperationVariables, QueryHookOptions, QueryResult, useQuery} from "@apollo/client";
+import {gql} from "@apollo/client";
 import {Issue} from "../model/issue";
-import {emptyPageInfo, PageInfo} from "./index";
+import {PageInfo} from "./index";
 
 export type IssuesResponse = {
-  node:  {
+  node: {
     issues: {
       edges: {
         node: Issue
@@ -42,32 +42,40 @@ export const issuesInRepositoryQuery = gql`
   }
 `
 
-export type IssuesInRepositoryQueryParam = {
-  repositoryId: string,
-  limit: number,
-  cursor: string | null
-}
-
-export type FetchMoreIssues = {
-  fetchMoreIssues: (callback: (newResponse: IssuesResponse) => void) => void
-}
-
-export const useIssuesInRepositoryQuery = (param: IssuesInRepositoryQueryParam, options?:QueryHookOptions<IssuesResponse, IssuesInRepositoryQueryParam>): QueryResult<IssuesResponse, IssuesInRepositoryQueryParam> & FetchMoreIssues => {
-  const result = useQuery<IssuesResponse, IssuesInRepositoryQueryParam>(issuesInRepositoryQuery, {
-    ...options,
-    variables: param,
-    fetchPolicy: 'no-cache'
-  })
-  const endCursor = result.data?.node.issues.pageInfo.endCursor
-  return {...result,
-    fetchMoreIssues: (callback: (newResponse: IssuesResponse) => void): void => {
-      result.fetchMore({
-        variables: {
-          repositoryId: param.repositoryId,
-          limit: param.limit,
-          cursor: endCursor
-        }
-      }).then(response => callback(response.data))
-    }
+export type CreateIssueResponse = {
+  createIssue: {
+    issue: Issue
   }
 }
+
+export const createIssueMutation = gql`
+  mutation ($repositoryId: ID!, $title: String, $body: String) {
+    createIssue(input: { repositoryId: $repositoryId, title: $title, body: $body }) {
+      issue {
+        id
+        title
+        body
+        url
+      }
+    }
+  }
+`
+
+export type UpdateIssueResponse = {
+  updateIssue: {
+    issue: Issue
+  }
+}
+
+export const updateIssueMutation = gql`
+  mutation ($issueId: ID!, $title: String, $body: String) {
+    updateIssue(input: { id: $issueId, title: $title, body: $body }) {
+      issue {
+        id
+        title
+        body
+        url
+      }
+    }
+  }
+`

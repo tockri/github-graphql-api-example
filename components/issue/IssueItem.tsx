@@ -4,11 +4,8 @@ import Box from "@mui/material/Box";
 import {SxProps} from "@mui/system";
 import ReactMarkdown from "react-markdown";
 import {styled} from "@mui/material/styles";
-import {Grid} from "@mui/material";
-
-export type IssueItemParam = {
-  issue: Issue
-}
+import {Button, Grid, IconButton} from "@mui/material";
+import EditIcon from '@mui/icons-material/Edit';
 
 const issueItemBoxStyle: SxProps = {
   borderRadius: 1,
@@ -22,11 +19,17 @@ const titleBoxStyle: SxProps = {
   borderBottomWidth: '1px',
   paddingTop: 2,
   paddingBottom: 1,
+  alignItems: "center"
 }
 
 const titleStyle: SxProps = {
   paddingLeft: 2,
   fontSize: "large"
+}
+
+const buttonsBoxStyle: SxProps = {
+  textAlign: "right",
+  paddingRight: 2
 }
 
 const githubIconStyle: SxProps = {
@@ -39,25 +42,46 @@ const githubIconStyle: SxProps = {
 
 const BodyBox = styled(ReactMarkdown)`
   font-size: 1em !important;
-  padding: 2em;
   h1,h2,h3,h4 {
     font-size: 1.2em !important;
   }
+  p {
+    margin: 0 0 0.5em 0 !important;
+    &:last-child {
+      margin-bottom: 0 !important;
+    }
+  }
 `
 
+const bodyBoxStyle: SxProps = {
+  paddingX: 2,
+  paddingY: 1.5
+}
+
+export type IssueItemParam = {
+  issue: Issue,
+  onEditButtonClicked: (issue: Issue) => void
+}
+
 export const IssueItem: React.FC<IssueItemParam> = (props) => {
-  const {issue} = props
+  const {issue, onEditButtonClicked} = props
+  const onEditButtonClick = () => onEditButtonClicked(issue)
   return <Box sx={issueItemBoxStyle}>
     <Grid container sx={titleBoxStyle}>
       <Grid item xs={11}>
         <Box sx={titleStyle}>{issue.title}</Box>
       </Grid>
-      <Grid item xs={1}>
-        <Box component="a" href={issue.url} target="_blank" rel="noreferrer">
+      <Grid item xs={1} sx={buttonsBoxStyle}>
+        <IconButton size="small" onClick={onEditButtonClick}>
+          <EditIcon />
+        </IconButton>
+        <IconButton size="small" component="a" href={issue.url} target="_blank" rel="noreferrer" title="Go to github">
           <Box component="img" src='/favicon.png' alt="" sx={githubIconStyle}/>
-        </Box>
+        </IconButton>
       </Grid>
     </Grid>
-    <BodyBox>{issue.body}</BodyBox>
+    <Box sx={bodyBoxStyle}>
+      <BodyBox>{issue.body}</BodyBox>
+    </Box>
   </Box>
 }

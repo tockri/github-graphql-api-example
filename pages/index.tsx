@@ -5,10 +5,10 @@ import {LoadingWrapper} from "../components/QueryHelper";
 import Box from "@mui/material/Box";
 import {RepositoryItem} from "../components/repository/RepositoryItem";
 import {PageRoot} from "../components/layout/PageRoot";
-import {useRecoilState} from "recoil";
+import {useRecoilState, useResetRecoilState} from "recoil";
 import {styled} from "@mui/material/styles";
 import {useRouter} from "next/router";
-import {RepositoryListState, selectedRepositoryIdState, useRepositoryListState} from "../recoil/states";
+import {RepositoryListState, selectedRepositoryIdState, useRepositoryListState} from "../recoil/RepositoryListState";
 import {NavList} from "../components/common/NavList";
 
 const ListItem = styled(Box)`
@@ -34,13 +34,14 @@ type RepoListProps = {
 const RepoList: React.FC<RepoListProps> = (props) => {
   const {state} = props
   const [selectedId, setSelectedId] = useRecoilState(selectedRepositoryIdState)
-  const router = useRouter()
   const getClassName = (repositoryId: string):string =>
       !selectedId || repositoryId === selectedId ? 'extended' : 'collapsed'
+  const router = useRouter()
   useEffect(() => {
     if (selectedId !== '')
       setTimeout(() => {
         router.push(`/repo/${selectedId}`)
+            .then(() => setSelectedId(''))
       }, 500)
   }, [selectedId, router])
 

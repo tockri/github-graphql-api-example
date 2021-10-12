@@ -1,9 +1,4 @@
-import {ApolloError, gql, useQuery} from '@apollo/client'
-
-
-export type OnErrorProps = {
-  error: ApolloError
-}
+import {gql} from '@apollo/client'
 
 
 export type PageInfo = {
@@ -35,32 +30,6 @@ export const REMOVE_STAR_REPOSITORY = gql`
       starrable {
         id
         viewerHasStarred
-      }
-    }
-  }
-`
-
-export const CREATE_ISSUE = gql`
-  mutation ($id: ID!, $title: String, $body: String) {
-    createIssue(input: { repositoryId: $id, title: $title, body: $body }) {
-      issue {
-        id
-        title
-        body
-        url
-      }
-    }
-  }
-`
-
-export const UPDATE_ISSUE = gql`
-  mutation ($id: ID!, $title: String, $body: String) {
-    updateIssue(input: { id: $id, title: $title, body: $body }) {
-      issue {
-        id
-        title
-        body
-        url
       }
     }
   }
