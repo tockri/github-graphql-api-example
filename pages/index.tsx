@@ -1,16 +1,15 @@
 import type {NextPage} from 'next'
 import * as React from 'react';
 import {useEffect} from 'react';
-import {useRepositoriesQuery} from "../graphql/repositories";
 import {LoadingWrapper} from "../components/QueryHelper";
 import Box from "@mui/material/Box";
 import {RepositoryItem} from "../components/repository/RepositoryItem";
 import {PageRoot} from "../components/layout/PageRoot";
-import {useRecoilState, useRecoilValue} from "recoil";
+import {useRecoilState} from "recoil";
 import {styled} from "@mui/material/styles";
-import {Breadcrumbs, Button} from "@mui/material";
 import {useRouter} from "next/router";
-import {repoListState, repositoriesResponseState, selectedRepositoryIdState} from "../recoil/states";
+import {RepositoryListState, selectedRepositoryIdState, useRepositoryListState} from "../recoil/states";
+import {NavList} from "../components/common/NavList";
 
 const ListItem = styled(Box)`
   transition: max-height 0.5s ease-in-out, margin-bottom 0.5s ease-in-out, opacity 0.2s ease-in-out; 
@@ -18,7 +17,7 @@ const ListItem = styled(Box)`
   overflow: hidden;
   &.extended {
     opacity: 1;
-    max-height: 100px;
+    max-height: 200px;
     margin-bottom: 1em;
   }
   &.collapsed {
@@ -28,20 +27,16 @@ const ListItem = styled(Box)`
   }
 `
 
-const HomeButton = styled(Button)`
-  &.visible: {
-    visibility: show;
-  }
-  &.hidden: {
-    visibility: hidden;
-  }
-  margin-bottom: 1em;
-`
+type RepoListProps = {
+  state: RepositoryListState
+}
 
-const RepoList: React.FC = () => {
-  const state = useRecoilValue(repoListState)
+const RepoList: React.FC<RepoListProps> = (props) => {
+  const {state} = props
   const [selectedId, setSelectedId] = useRecoilState(selectedRepositoryIdState)
   const router = useRouter()
+  const getClassName = (repositoryId: string):string =>
+      !selectedId || repositoryId === selectedId ? 'extended' : 'collapsed'
   useEffect(() => {
     if (selectedId !== '')
       setTimeout(() => {
@@ -50,23 +45,21 @@ const RepoList: React.FC = () => {
   }, [selectedId, router])
 
   return <Box>
-    <Breadcrumbs sx={{marginBottom: 2}}><Box>Home</Box></Breadcrumbs>
-    {state.items.map((repo) =>
-        <ListItem key={repo.repository.id} className={repo.visible ? 'extended' : 'collapsed'}>
-          <RepositoryItem repository={repo.repository} onSelect={setSelectedId}/>
+    <NavList items={[{label: "Home"}]} />
+    {state.items.map((item) =>
+        <ListItem key={item.repository.id} className={getClassName(item.repository.id)}>
+          <RepositoryItem repository={item.repository} onSelect={setSelectedId}/>
         </ListItem>
     )}
   </Box>
 }
 
 const IndexPage: NextPage = () => {
-  const [state, setState] = useRecoilState(repositoriesResponseState)
-  const {loading, error, data} = useRepositoriesQuery({
-    onCompleted: setState
-  })
+  const {loading, error, state} = useRepositoryListState()
+
   return <PageRoot>
     <LoadingWrapper loading={loading} error={error}>
-      <RepoList/>
+      <RepoList state={state}/>
     </LoadingWrapper>
   </PageRoot>
 }

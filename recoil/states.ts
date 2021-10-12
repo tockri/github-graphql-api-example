@@ -1,30 +1,21 @@
 import {Repository} from "../model/repository";
-import {
-  atom,
-  selector,
-  SetterOrUpdater,
-  useRecoilCallback,
-  useRecoilState,
-  useRecoilValue
-} from "recoil";
-import {emptyRepositoriesResponse, RepositoriesResponse} from "../graphql/repositories";
+import {atom, selector, SetterOrUpdater, useRecoilCallback, useRecoilState} from "recoil";
+import {repositoriesQuery, RepositoriesResponse} from "../graphql/repositories";
 import {Issue} from "../model/issue";
 import {issuesInRepositoryQuery, IssuesResponse} from "../graphql/issues";
 import {emptyPageInfo, PageInfo} from "../graphql";
-import {ApolloClient, ApolloError, useQuery} from "@apollo/client";
+import {ApolloError, useQuery} from "@apollo/client";
 
 export type RepositoryItemState = {
   repository: Repository
-  visible: boolean
 }
 
-export type SelectedRepositoryItemState = {
-  selected?: Repository
-}
-
-export type RepoListState = {
+export type RepositoryListState = {
   items: RepositoryItemState[]
-  selectedId: string
+}
+
+const emptyRepositoryListState: RepositoryListState = {
+  items: [],
 }
 
 export const selectedRepositoryIdState = atom<string>({
@@ -32,33 +23,54 @@ export const selectedRepositoryIdState = atom<string>({
   default: ''
 })
 
-export const repositoriesResponseState = atom<RepositoriesResponse>({
-  key: 'repositoriesResponse',
-  default: emptyRepositoriesResponse
+export const repositoryListState = atom<RepositoryListState>({
+  key: 'repositoryListState',
+  default: emptyRepositoryListState
 })
 
-export const repoListState = selector<RepoListState>({
-  key: 'repoListState',
-  get: ({get}) => {
-    const apiResponse = get(repositoriesResponseState)
-    const selectedId = get(selectedRepositoryIdState)
-    return {
-      items: apiResponse.viewer.repositories.nodes.map(repo => ({
-        repository: repo,
-        visible: !selectedId || repo.id === selectedId
-      })),
-      selectedId: selectedId
+export type RepositoryListStateUse = {
+  loading: boolean
+  error?: ApolloError
+  state: RepositoryListState
+  set: SetterOrUpdater<RepositoryListState>
+}
+
+const convertRepositoriesResponse = (data: RepositoriesResponse): RepositoryListState =>
+    ({
+      items: data.viewer.repositories.nodes.map(repo => ({
+        repository: repo
+      }))
+    })
+
+export const useRepositoryListState = (): RepositoryListStateUse => {
+  const [currVal, set] = useRecoilState(repositoryListState)
+
+  const {loading, error} = useQuery(repositoriesQuery, {
+    onCompleted: (data) => {
+      const nextVal = convertRepositoriesResponse(data)
+      set(nextVal)
     }
+  })
+
+  return {
+    loading,
+    error,
+    state: currVal,
+    set
   }
-})
+}
+
+export type SelectedRepositoryItemState = {
+  repository?: Repository
+}
 
 export const selectedRepositoryState = selector<SelectedRepositoryItemState>({
   key: 'selectedRepositoryState',
   get: ({get}) => {
-    const apiResponse = get(repositoriesResponseState)
+    const list = get(repositoryListState)
     const selectedId = get(selectedRepositoryIdState)
     return {
-      selected: apiResponse.viewer.repositories.nodes.find(repo => repo.id === selectedId)
+      repository: list.items.find(repo => repo.repository.id === selectedId)?.repository
     }
   }
 })
@@ -66,7 +78,7 @@ export const selectedRepositoryState = selector<SelectedRepositoryItemState>({
 
 // IssueList
 
-const convert = (repositoryId: string, response: IssuesResponse): IssueListState => ({
+const convertIssuesResponse = (repositoryId: string, response: IssuesResponse): IssueListState => ({
   repositoryId: repositoryId,
   issues: response.node.issues.edges.map(e => e.node),
   pageInfo: response.node.issues.pageInfo
@@ -106,7 +118,7 @@ export type IssueListStateUse = {
 export const useIssueListState = (repositoryId: string, limit: number): IssueListStateUse => {
   const [currVal, set] = useRecoilState(issueListStateAtom)
   if (currVal.repositoryId !== repositoryId) {
-    set({...emptyIssueListState, repositoryId:repositoryId})
+    set({...emptyIssueListState, repositoryId: repositoryId})
   }
 
   const {loading, error, fetchMore} = useQuery<IssuesResponse>(issuesInRepositoryQuery, {
@@ -116,7 +128,7 @@ export const useIssueListState = (repositoryId: string, limit: number): IssueLis
       cursor: null
     },
     onCompleted: (data) => {
-      set(convert(repositoryId, data))
+      set(convertIssuesResponse(repositoryId, data))
     }
   })
 
