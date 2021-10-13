@@ -30,9 +30,9 @@ const CreationArea: React.FC<IssueEditingUse> = (props) => {
   const buttonLabel = "Create New Issue"
 
   return editingIssueId === undefined
-        ? <Button onClick={startCreate}>{buttonLabel}</Button>
-        : editingIssueId === ""
-          ? <IssueEditor onCancel={cancel} onSubmit={submitCreate} loading={createSubmitting} />
+      ? <Button onClick={startCreate}>{buttonLabel}</Button>
+      : editingIssueId === ""
+          ? <IssueEditor onCancel={cancel} onSubmit={submitCreate} loading={createSubmitting} error={errorInCreate}/>
           : <Button disabled>{buttonLabel}</Button>
 
 }
@@ -41,7 +41,8 @@ const IssueArea: React.FC<IssueEditingUse & { issue: Issue }> = (props) => {
   const {updateSubmitting, errorInUpdate, editingIssueId, startEdit, cancel, submitEdit, issue} = props
 
   if (editingIssueId === issue.id) {
-    return <IssueEditor issue={issue} onCancel={cancel} onSubmit={submitEdit} loading={updateSubmitting} />
+    return <IssueEditor issue={issue} onCancel={cancel} onSubmit={submitEdit} loading={updateSubmitting}
+                        error={errorInUpdate}/>
   } else {
     return <IssueItem issue={issue} onEditButtonClicked={startEdit}/>
   }
@@ -53,7 +54,7 @@ const IssueList: React.FC<IssueListProps> = (props) => {
   const editing = useIssueEditing(repositoryId)
   useEffect(() => {
     editing.cancel()
-  }, [])
+  }, [editing])
 
   return <LoadingWrapper loading={loading} error={error}>
     <Box sx={{marginTop: 2}}>
@@ -64,7 +65,7 @@ const IssueList: React.FC<IssueListProps> = (props) => {
           </Box>
       )}
       {state.pageInfo.hasNextPage
-          ? <InView onIntersect={fetchMore} />
+          ? <InView onIntersect={fetchMore}/>
           : null
       }
     </Box>

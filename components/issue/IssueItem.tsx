@@ -4,7 +4,7 @@ import Box from "@mui/material/Box";
 import {SxProps} from "@mui/system";
 import ReactMarkdown from "react-markdown";
 import {styled} from "@mui/material/styles";
-import {Button, Grid, IconButton} from "@mui/material";
+import {Grid, IconButton} from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
 
 const issueItemBoxStyle: SxProps = {
@@ -73,7 +73,7 @@ export const IssueItem: React.FC<IssueItemParam> = (props) => {
       </Grid>
       <Grid item xs={1} sx={buttonsBoxStyle}>
         <IconButton size="small" onClick={onEditButtonClick}>
-          <EditIcon />
+          <EditIcon/>
         </IconButton>
         <IconButton size="small" component="a" href={issue.url} target="_blank" rel="noreferrer" title="Go to github">
           <Box component="img" src='/favicon.png' alt="" sx={githubIconStyle}/>
