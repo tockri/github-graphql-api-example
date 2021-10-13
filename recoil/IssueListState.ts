@@ -1,15 +1,8 @@
-import {
-  createIssueMutation,
-  CreateIssueResponse,
-  issuesInRepositoryQuery,
-  IssuesInRepositoryResponse,
-  updateIssueMutation,
-  UpdateIssueResponse
-} from "../graphql/issues";
+import {issuesInRepositoryQuery, IssuesInRepositoryResponse} from "../graphql/issues";
 import {Issue} from "../model/issue";
 import {emptyPageInfo, PageInfo} from "../graphql";
-import {atom, SetterOrUpdater, useRecoilState, useSetRecoilState} from "recoil";
-import {useMutation, useQuery} from "@apollo/client";
+import {atom, useRecoilState, useSetRecoilState} from "recoil";
+import {useQuery} from "@apollo/client";
 
 const convertIssuesResponse = (repositoryId: string, response: IssuesInRepositoryResponse): IssueListState => ({
   repositoryId: repositoryId,
@@ -43,8 +36,8 @@ const issueListStateAtom = atom<IssueListState>({
 export type IssueListStateUse = {
   readonly loading: boolean
   readonly error?: Error
-  readonly state: IssueListState
-  readonly set: SetterOrUpdater<IssueListState>
+  readonly issues: Issue[]
+  readonly pageInfo: PageInfo
   readonly fetchMore: () => Promise<void>
 }
 
@@ -80,115 +73,39 @@ export const useIssueListState = (repositoryId: string, limit: number): IssueLis
   return {
     loading,
     error,
-    state: currVal,
-    set,
+    issues: currVal.issues,
+    pageInfo: currVal.pageInfo,
     fetchMore: fetchIssuesMore
   }
 }
 
-type IssueEditingState = {
-  readonly editingIssueId: string
-  readonly editingNew: boolean
+export type IssueListEditUse = {
+  readonly updateList: (toSave: Issue) => void
+  readonly insertTopOnList: (toSave: Issue) => void
 }
 
-const emptyIssueEditingState: IssueEditingState = {
-  editingIssueId: "",
-  editingNew: false
-}
-
-const issueEditingStateAtom = atom<IssueEditingState>({
-  key: 'issueEditingState',
-  default: emptyIssueEditingState
-})
-
-export type IssueEditingUse = {
-  readonly startEdit: (issue: Issue) => void
-  readonly submitEdit: (toSave: Issue) => Promise<void>
-  readonly errorInUpdate?: Error
-  readonly updateSubmitting: boolean
-
-  readonly startCreate: () => void
-  readonly submitCreate: (toSave: Issue) => Promise<void>
-  readonly createSubmitting: boolean
-  readonly errorInCreate?: Error
-
-  readonly cancel: () => void
-} & IssueEditingState
-
-export const useIssueEditing = (repositoryId: string): IssueEditingUse => {
+export const useIssueListEdit = (): IssueListEditUse => {
   const setList = useSetRecoilState<IssueListState>(issueListStateAtom)
-  const [currVal, set] = useRecoilState<IssueEditingState>(issueEditingStateAtom)
-  const [createIssue, createResponse] = useMutation<CreateIssueResponse>(createIssueMutation)
-  const [updateIssue, updateResponse] = useMutation<UpdateIssueResponse>(updateIssueMutation)
 
-  const startEdit = (issue: Issue) => set({
-    editingIssueId: issue.id,
-    editingNew: false
-  })
-
-  const startCreate = () => set({
-    editingIssueId: "",
-    editingNew: true
-  })
-
-  const stopEditing = () => {
-    set(emptyIssueEditingState)
+  const updateList = (toSave: Issue) => {
+    setList((currList) => ({
+      ...currList,
+      issues: currList.issues.map(i => i.id === toSave.id ? toSave : i)
+    }))
   }
 
-  const submitCreate = async (toSave: Issue) => {
-    if (currVal.editingIssueId === "") {
-      const {data} = await createIssue({
-        variables: {
-          repositoryId: repositoryId,
-          title: toSave.title,
-          body: toSave.body
-        }
-      })
-      if (data) {
-        const newIssue = data.createIssue.issue
-        stopEditing()
-        setList((currList) => ({
-          ...currList,
-          issues: [newIssue].concat(currList.issues)
-        }))
-      }
-    }
-  }
-
-  const submitEdit = async (toSave: Issue) => {
-    if (currVal.editingIssueId === toSave.id) {
-      const {data} = await updateIssue({
-        variables: {
-          issueId: toSave.id,
-          title: toSave.title,
-          body: toSave.body
-        }
-      })
-      if (data) {
-        const updated = data.updateIssue.issue
-        stopEditing()
-        setList((currList) => ({
-          ...currList,
-          issues: currList.issues.map(i => i.id === updated.id ? updated : i)
-        }))
-      }
-    }
+  const insertTopOnList = (toSave: Issue) => {
+    setList((currList) => ({
+      ...currList,
+      issues: [toSave].concat(currList.issues)
+    }))
   }
 
   return {
-    ...currVal,
-    createSubmitting: createResponse.loading,
-    updateSubmitting: updateResponse.loading,
-    errorInCreate: createResponse.error,
-    errorInUpdate: updateResponse.error,
-    startEdit,
-    submitEdit,
-    startCreate,
-    submitCreate,
-    cancel: stopEditing
+    updateList,
+    insertTopOnList
   }
 }
-
 
 
 
