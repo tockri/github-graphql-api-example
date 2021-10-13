@@ -2,7 +2,7 @@ import React, {useEffect} from "react";
 import {useInView} from "react-intersection-observer";
 
 export type InViewProps = {
-  onIntersect: () => void
+  readonly onIntersect: () => void
 }
 
 export const InView: React.FC<InViewProps> = (props) => {

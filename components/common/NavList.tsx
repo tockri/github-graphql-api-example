@@ -4,9 +4,9 @@ import {SxProps} from "@mui/system";
 import {Breadcrumbs, Link} from "@mui/material";
 
 export type NavListItemProps = {
-  label: string,
-  href?: string,
-  onClick?: (() => void)
+  readonly label: string,
+  readonly href?: string,
+  readonly onClick?: (() => void)
 }
 
 const linkItemSx: SxProps = {
@@ -31,7 +31,7 @@ const NavListItem: React.FC<NavListItemProps> = (props) => {
 }
 
 export type NavListProps = {
-  items: NavListItemProps[]
+  readonly items: NavListItemProps[]
 }
 
 const navListSx: SxProps = {

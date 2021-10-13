@@ -3,7 +3,7 @@ import {gql} from "@apollo/client";
 import {Issue} from "../model/issue";
 import {PageInfo} from "./index";
 
-export type IssuesResponse = {
+export type IssuesInRepositoryResponse = {
   node: {
     issues: {
       edges: {

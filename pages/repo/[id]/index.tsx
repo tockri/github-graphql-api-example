@@ -7,14 +7,14 @@ import {IssueEditingUse, useIssueEditing, useIssueListState} from "../../../reco
 import {RepositoryItem} from "../../../components/repository/RepositoryItem";
 import {PageRoot} from '../../../components/layout/PageRoot';
 import Box from "@mui/material/Box";
-import {Button} from "@mui/material";
-import {LoadingWrapper} from "../../../components/QueryHelper";
+import Button from "@mui/material/Button";
+import {LoadingWrapper} from "../../../components/common/LoadingWrapper";
 import {IssueItem} from "../../../components/issue/IssueItem";
 import {SxProps} from "@mui/system";
 import {NavList, NavListItemProps} from "../../../components/common/NavList";
 import {IssueEditor} from "../../../components/issue/IssueEditor";
 import {Issue} from "../../../model/issue";
-import {useRepositoryState} from "../../../recoil/RepositoryListState";
+import {useRepositoryState} from "../../../recoil/RepositoryState";
 import {InView} from "../../../components/common/InView";
 
 type IssueListProps = {

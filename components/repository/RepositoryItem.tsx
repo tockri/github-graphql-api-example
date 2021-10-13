@@ -5,8 +5,8 @@ import {SxProps} from "@mui/system";
 import {Grid, IconButton} from "@mui/material";
 
 export type RepositoryItemProps = {
-  repository: Repository,
-  onSelect?: (repositoryId: string) => void
+  readonly repository: Repository,
+  readonly onSelect?: (repositoryId: string) => void
 }
 
 const rootStyle = (props: RepositoryItemProps): SxProps => ({

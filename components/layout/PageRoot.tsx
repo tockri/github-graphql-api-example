@@ -1,7 +1,10 @@
 import React from "react";
-import {AppBar, Toolbar, Typography} from "@mui/material";
+import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+
 
 
 export const PageRoot: React.FC = (props) => {

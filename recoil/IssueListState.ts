@@ -2,31 +2,31 @@ import {
   createIssueMutation,
   CreateIssueResponse,
   issuesInRepositoryQuery,
-  IssuesResponse,
+  IssuesInRepositoryResponse,
   updateIssueMutation,
   UpdateIssueResponse
 } from "../graphql/issues";
 import {Issue} from "../model/issue";
 import {emptyPageInfo, PageInfo} from "../graphql";
-import {atom, SetterOrUpdater, useRecoilCallback, useRecoilState, useSetRecoilState} from "recoil";
-import {ApolloError, useMutation, useQuery} from "@apollo/client";
+import {atom, SetterOrUpdater, useRecoilState, useSetRecoilState} from "recoil";
+import {useMutation, useQuery} from "@apollo/client";
 
-const convertIssuesResponse = (repositoryId: string, response: IssuesResponse): IssueListState => ({
+const convertIssuesResponse = (repositoryId: string, response: IssuesInRepositoryResponse): IssueListState => ({
   repositoryId: repositoryId,
   issues: response.node.issues.edges.map(e => e.node),
   pageInfo: response.node.issues.pageInfo
 })
 
-const mergeIssuesResponse = (currVal: IssueListState, response: IssuesResponse): IssueListState => ({
+const mergeIssuesResponse = (currVal: IssueListState, response: IssuesInRepositoryResponse): IssueListState => ({
   repositoryId: currVal.repositoryId,
   issues: currVal.issues.concat(response.node.issues.edges.map(e => e.node)),
   pageInfo: response.node.issues.pageInfo
 })
 
 export type IssueListState = {
-  repositoryId: string
-  issues: Issue[]
-  pageInfo: PageInfo
+  readonly repositoryId: string
+  readonly issues: Issue[]
+  readonly pageInfo: PageInfo
 }
 
 const emptyIssueListState: IssueListState = {
@@ -42,7 +42,7 @@ const issueListStateAtom = atom<IssueListState>({
 
 export type IssueListStateUse = {
   readonly loading: boolean
-  readonly error?: ApolloError
+  readonly error?: Error
   readonly state: IssueListState
   readonly set: SetterOrUpdater<IssueListState>
   readonly fetchMore: () => Promise<void>
@@ -54,7 +54,7 @@ export const useIssueListState = (repositoryId: string, limit: number): IssueLis
     set({...emptyIssueListState, repositoryId: repositoryId})
   }
 
-  const {loading, error, fetchMore} = useQuery<IssuesResponse>(issuesInRepositoryQuery, {
+  const {loading, error, fetchMore} = useQuery<IssuesInRepositoryResponse>(issuesInRepositoryQuery, {
     variables: {
       repositoryId: repositoryId,
       limit: limit,
@@ -66,17 +66,16 @@ export const useIssueListState = (repositoryId: string, limit: number): IssueLis
     }
   })
 
-  const fetchIssuesMore = useRecoilCallback((i) => async () => {
-    const currentList = await i.snapshot.getPromise(issueListStateAtom)
+  const fetchIssuesMore = async () => {
     const response = await fetchMore({
       variables: {
         repositoryId: repositoryId,
         limit: limit,
-        cursor: currentList.pageInfo.endCursor
+        cursor: currVal.pageInfo.endCursor
       }
     })
-    i.set(issueListStateAtom, mergeIssuesResponse(currentList, response.data))
-  }, [repositoryId, limit, fetchMore])
+    set((curr) => mergeIssuesResponse(curr, response.data))
+  }
 
   return {
     loading,
@@ -86,7 +85,6 @@ export const useIssueListState = (repositoryId: string, limit: number): IssueLis
     fetchMore: fetchIssuesMore
   }
 }
-
 
 type IssueEditingState = {
   readonly editingIssueId: string
@@ -106,13 +104,13 @@ const issueEditingStateAtom = atom<IssueEditingState>({
 export type IssueEditingUse = {
   readonly startEdit: (issue: Issue) => void
   readonly submitEdit: (toSave: Issue) => Promise<void>
-  readonly errorInUpdate?: ApolloError
+  readonly errorInUpdate?: Error
   readonly updateSubmitting: boolean
 
   readonly startCreate: () => void
   readonly submitCreate: (toSave: Issue) => Promise<void>
   readonly createSubmitting: boolean
-  readonly errorInCreate?: ApolloError
+  readonly errorInCreate?: Error
 
   readonly cancel: () => void
 } & IssueEditingState
@@ -132,7 +130,6 @@ export const useIssueEditing = (repositoryId: string): IssueEditingUse => {
     editingIssueId: "",
     editingNew: true
   })
-
 
   const stopEditing = () => {
     set(emptyIssueEditingState)

@@ -1,8 +1,8 @@
 export type Issue = {
-  id: string
-  title: string
-  url: string
-  body: string
+  readonly id: string
+  readonly title: string
+  readonly url: string
+  readonly body: string
 }
 
 export const emptyIssue = {

@@ -3,9 +3,9 @@ import {Repository} from "../model/repository";
 
 
 export type RepositoriesResponse = {
-  viewer: {
-    repositories: {
-      nodes: Repository[]
+  readonly viewer: {
+    readonly repositories: {
+      readonly nodes: Repository[]
     }
   }
 }

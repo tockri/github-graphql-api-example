@@ -1,10 +1,10 @@
 export type Repository = {
-  id: string
-  name: string
-  url: string
-  description: string
-  viewerHasStarred: boolean
-  stargazers: {
-    totalCount: number
+  readonly id: string
+  readonly name: string
+  readonly url: string
+  readonly description: string
+  readonly viewerHasStarred: boolean
+  readonly stargazers: {
+    readonly totalCount: number
   }
 }

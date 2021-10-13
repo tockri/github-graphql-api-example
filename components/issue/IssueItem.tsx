@@ -59,8 +59,8 @@ const bodyBoxStyle: SxProps = {
 }
 
 export type IssueItemParam = {
-  issue: Issue,
-  onEditButtonClicked: (issue: Issue) => void
+  readonly issue: Issue,
+  readonly onEditButtonClicked: (issue: Issue) => void
 }
 
 export const IssueItem: React.FC<IssueItemParam> = (props) => {

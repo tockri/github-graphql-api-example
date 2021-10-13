@@ -6,7 +6,6 @@ import {SxProps} from "@mui/system";
 import LoadingButton from '@mui/lab/LoadingButton';
 import CancelIcon from '@mui/icons-material/Cancel';
 import SendIcon from '@mui/icons-material/Send';
-import {ApolloError} from "@apollo/client";
 
 const editorStyle: SxProps = {
   bgcolor: '#e0e0e0',
@@ -18,7 +17,7 @@ const editorStyle: SxProps = {
 export type IssueEditorProps = {
   issue?: Issue
   loading: boolean
-  error?: ApolloError | string
+  error?: Error | string
   onCancel: () => void
   onSubmit: (issue: Issue) => void
 }
