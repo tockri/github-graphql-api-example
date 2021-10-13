@@ -15,7 +15,9 @@ module.exports = {
       },
     },
   ],
-  rules: {},
+  rules: {
+    "react-hooks/exhaustive-deps": "off"
+  },
   env: {
     browser: true,
     commonjs: true,

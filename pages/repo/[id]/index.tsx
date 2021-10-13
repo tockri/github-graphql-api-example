@@ -26,12 +26,11 @@ const issueListItemStyle: SxProps = {
 }
 
 const CreationArea: React.FC<IssueEditingUse> = (props) => {
-  const {createSubmitting, errorInCreate, editingIssueId, startCreate, cancel, submitCreate} = props
-  const buttonLabel = "Create New Issue"
+  const {createSubmitting, errorInCreate, editingNew, startCreate, cancel, submitCreate} = props
 
-  return editingIssueId === ""
+  return editingNew
           ? <IssueEditor onCancel={cancel} onSubmit={submitCreate} loading={createSubmitting} error={errorInCreate}/>
-          : <Button onClick={startCreate}>{buttonLabel}</Button>
+          : <Button onClick={startCreate}>Create New Issue</Button>
 
 }
 

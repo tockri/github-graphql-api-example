@@ -89,12 +89,18 @@ export const useIssueListState = (repositoryId: string, limit: number): IssueLis
 
 
 type IssueEditingState = {
-  readonly editingIssueId?: string
+  readonly editingIssueId: string
+  readonly editingNew: boolean
+}
+
+const emptyIssueEditingState: IssueEditingState = {
+  editingIssueId: "",
+  editingNew: false
 }
 
 const issueEditingStateAtom = atom<IssueEditingState>({
   key: 'issueEditingState',
-  default: {}
+  default: emptyIssueEditingState
 })
 
 export type IssueEditingUse = {
@@ -112,24 +118,24 @@ export type IssueEditingUse = {
 } & IssueEditingState
 
 export const useIssueEditing = (repositoryId: string): IssueEditingUse => {
-  const [currList, setList] = useRecoilState(issueListStateAtom)
-  const [currVal, set] = useRecoilState(issueEditingStateAtom)
+  const [, setList] = useRecoilState<IssueListState>(issueListStateAtom)
+  const [currVal, set] = useRecoilState<IssueEditingState>(issueEditingStateAtom)
   const [createIssue, createResponse] = useMutation<CreateIssueResponse>(createIssueMutation)
   const [updateIssue, updateResponse] = useMutation<UpdateIssueResponse>(updateIssueMutation)
 
-  const startEdit = (issue: Issue) => set(currVal => ({
-    repositoryId: repositoryId,
-    editingIssueId: issue.id
-  }))
+  const startEdit = (issue: Issue) => set({
+    editingIssueId: issue.id,
+    editingNew: false
+  })
 
-  const startCreate = () => set(currVal => ({
-    repositoryId: repositoryId,
-    editingIssueId: ""
-  }))
+  const startCreate = () => set({
+    editingIssueId: "",
+    editingNew: true
+  })
 
 
   const stopEditing = () => {
-    set(currVal => ({...currVal, editingIssueId: undefined}))
+    set(emptyIssueEditingState)
   }
 
   const submitCreate = async (toSave: Issue) => {
