@@ -16,6 +16,7 @@ import {IssueEditor} from "../../../components/issue/IssueEditor";
 import {Issue} from "../../../model/issue";
 import {useRepositoryState} from "../../../recoil/RepositoryState";
 import {InView} from "../../../components/common/InView";
+import {CircularProgress, Stack} from "@mui/material";
 
 type IssueListProps = {
   repositoryId: string
@@ -29,8 +30,8 @@ const CreationArea: React.FC<IssueEditingUse> = (props) => {
   const {createSubmitting, errorInCreate, editingNew, startCreate, cancel, submitCreate} = props
 
   return editingNew
-          ? <IssueEditor onCancel={cancel} onSubmit={submitCreate} loading={createSubmitting} error={errorInCreate}/>
-          : <Button onClick={startCreate}>Create New Issue</Button>
+      ? <IssueEditor onCancel={cancel} onSubmit={submitCreate} loading={createSubmitting} error={errorInCreate}/>
+      : <Button onClick={startCreate}>Create New Issue</Button>
 
 }
 
@@ -62,7 +63,11 @@ const IssueList: React.FC<IssueListProps> = (props) => {
           </Box>
       )}
       {state.pageInfo.hasNextPage
-          ? <InView onIntersect={fetchMore}/>
+          ? <InView onIntersect={fetchMore}>
+            <Stack alignItems="center">
+              <CircularProgress />
+            </Stack>
+          </InView>
           : null
       }
     </Box>

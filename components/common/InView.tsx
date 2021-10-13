@@ -14,5 +14,5 @@ export const InView: React.FC<InViewProps> = (props) => {
       props.onIntersect()
     }
   }, [inView, props])
-  return <div ref={ref}>&nbsp;</div>
+  return <div ref={ref}>{props.children}</div>
 }

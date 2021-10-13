@@ -10,7 +10,7 @@ export const ErrorDisplay: React.FC<ErrorDisplayProps> = (props: ErrorDisplayPro
 
 export const Loading: React.FC = () =>
     <Stack alignItems="center">
-      <CircularProgress sx={{marginX: "auto", marginTop: 3}}/>
+      <CircularProgress />
     </Stack>
 
 export type LoadingWrapperProps = {
