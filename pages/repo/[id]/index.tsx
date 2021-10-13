@@ -29,11 +29,9 @@ const CreationArea: React.FC<IssueEditingUse> = (props) => {
   const {createSubmitting, errorInCreate, editingIssueId, startCreate, cancel, submitCreate} = props
   const buttonLabel = "Create New Issue"
 
-  return editingIssueId === undefined
-      ? <Button onClick={startCreate}>{buttonLabel}</Button>
-      : editingIssueId === ""
+  return editingIssueId === ""
           ? <IssueEditor onCancel={cancel} onSubmit={submitCreate} loading={createSubmitting} error={errorInCreate}/>
-          : <Button disabled>{buttonLabel}</Button>
+          : <Button onClick={startCreate}>{buttonLabel}</Button>
 
 }
 
@@ -54,7 +52,7 @@ const IssueList: React.FC<IssueListProps> = (props) => {
   const editing = useIssueEditing(repositoryId)
   useEffect(() => {
     editing.cancel()
-  }, [editing])
+  }, [])
 
   return <LoadingWrapper loading={loading} error={error}>
     <Box sx={{marginTop: 2}}>

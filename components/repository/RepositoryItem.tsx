@@ -53,12 +53,12 @@ export const RepositoryItem: React.FC<RepositoryItemProps> = (props) => {
   } : undefined
   return <Grid sx={rootStyle(props)} onClick={onClick}>
     <Grid container sx={nameRowStyle}>
-      <Grid xs={11}>
+      <Grid item xs={11}>
         <Box sx={nameStyle}>
           {repository.name}
         </Box>
       </Grid>
-      <Grid xs={1} sx={buttonsBoxStyle}>
+      <Grid item xs={1} sx={buttonsBoxStyle}>
         <IconButton size="small" component="a" href={repository.url} target="_blank" rel="noreferrer" title="Go to github">
           <Box component="img" src='/favicon.png' alt="" sx={githubIconStyle}/>
         </IconButton>

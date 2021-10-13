@@ -67,16 +67,16 @@ export const useIssueListState = (repositoryId: string, limit: number): IssueLis
   })
 
   const fetchIssuesMore = useRecoilCallback((i) => async () => {
-    const currVal = await i.snapshot.getPromise(issueListStateAtom)
+    const currentList = await i.snapshot.getPromise(issueListStateAtom)
     const response = await fetchMore({
       variables: {
         repositoryId: repositoryId,
         limit: limit,
-        cursor: currVal.pageInfo.endCursor
+        cursor: currentList.pageInfo.endCursor
       }
     })
-    i.set(issueListStateAtom, mergeIssuesResponse(currVal, response.data))
-  }, [repositoryId])
+    i.set(issueListStateAtom, mergeIssuesResponse(currentList, response.data))
+  }, [repositoryId, limit, fetchMore])
 
   return {
     loading,
@@ -89,13 +89,12 @@ export const useIssueListState = (repositoryId: string, limit: number): IssueLis
 
 
 type IssueEditingState = {
-  readonly repositoryId: string
   readonly editingIssueId?: string
 }
 
-const issueEditingState = (repositoryId: string) => atom<IssueEditingState>({
+const issueEditingStateAtom = atom<IssueEditingState>({
   key: 'issueEditingState',
-  default: {repositoryId}
+  default: {}
 })
 
 export type IssueEditingUse = {
@@ -114,17 +113,17 @@ export type IssueEditingUse = {
 
 export const useIssueEditing = (repositoryId: string): IssueEditingUse => {
   const [currList, setList] = useRecoilState(issueListStateAtom)
-  const [currVal, set] = useRecoilState(issueEditingState(repositoryId))
+  const [currVal, set] = useRecoilState(issueEditingStateAtom)
   const [createIssue, createResponse] = useMutation<CreateIssueResponse>(createIssueMutation)
   const [updateIssue, updateResponse] = useMutation<UpdateIssueResponse>(updateIssueMutation)
 
   const startEdit = (issue: Issue) => set(currVal => ({
-    repositoryId: currVal.repositoryId,
+    repositoryId: repositoryId,
     editingIssueId: issue.id
   }))
 
   const startCreate = () => set(currVal => ({
-    repositoryId: currVal.repositoryId,
+    repositoryId: repositoryId,
     editingIssueId: ""
   }))
 
@@ -185,7 +184,6 @@ export const useIssueEditing = (repositoryId: string): IssueEditingUse => {
     submitCreate,
     cancel: stopEditing
   }
-
 }
 
 

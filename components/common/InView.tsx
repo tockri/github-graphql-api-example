@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import {useInView} from "react-intersection-observer";
 
 export type InViewProps = {
@@ -9,8 +9,10 @@ export const InView: React.FC<InViewProps> = (props) => {
   const {ref, inView} = useInView({
     threshold: 0
   })
-  if (inView) {
-    props.onIntersect()
-  }
+  useEffect(() => {
+    if (inView) {
+      props.onIntersect()
+    }
+  }, [inView, props])
   return <div ref={ref}>&nbsp;</div>
 }
