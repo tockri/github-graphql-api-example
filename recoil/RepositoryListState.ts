@@ -1,5 +1,5 @@
 import {Repository} from "../model/repository";
-import {atom, SetterOrUpdater, useRecoilState} from "recoil";
+import {atom, useRecoilState} from "recoil";
 import {useQuery} from "@apollo/client";
 import {repositoriesQuery, RepositoriesResponse} from "../graphql/repositories";
 
