@@ -50,7 +50,7 @@ const IssueArea: React.FC<IssueEditingUse & { issue: Issue }> = (props) => {
 
 const IssueList: React.FC<IssueListProps> = (props) => {
   const {repositoryId} = props
-  const {loading, error, state, fetchMore} = useIssueListState(repositoryId, 2)
+  const {loading, error, state, fetchMore} = useIssueListState(repositoryId, 3)
   const editing = useIssueEditing(repositoryId)
   useEffect(() => {
     editing.cancel()
