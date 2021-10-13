@@ -15,6 +15,7 @@ import {NavList, NavListItemProps} from "../../../components/common/NavList";
 import {IssueEditor} from "../../../components/issue/IssueEditor";
 import {Issue} from "../../../model/issue";
 import {useRepositoryState} from "../../../recoil/RepositoryListState";
+import {InView} from "../../../components/common/InView";
 
 type IssueListProps = {
   repositoryId: string
@@ -63,7 +64,7 @@ const IssueList: React.FC<IssueListProps> = (props) => {
           </Box>
       )}
       {state.pageInfo.hasNextPage
-          ? <Button onClick={fetchMore}>more</Button>
+          ? <InView onIntersect={fetchMore} />
           : null
       }
     </Box>
