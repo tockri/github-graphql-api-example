@@ -8,7 +8,7 @@ import {
 } from "../graphql/issues";
 import {Issue} from "../model/issue";
 import {emptyPageInfo, PageInfo} from "../graphql";
-import {atom, SetterOrUpdater, useRecoilCallback, useRecoilState} from "recoil";
+import {atom, SetterOrUpdater, useRecoilCallback, useRecoilState, useSetRecoilState} from "recoil";
 import {ApolloError, useMutation, useQuery} from "@apollo/client";
 
 const convertIssuesResponse = (repositoryId: string, response: IssuesResponse): IssueListState => ({
@@ -118,7 +118,7 @@ export type IssueEditingUse = {
 } & IssueEditingState
 
 export const useIssueEditing = (repositoryId: string): IssueEditingUse => {
-  const [, setList] = useRecoilState<IssueListState>(issueListStateAtom)
+  const setList = useSetRecoilState<IssueListState>(issueListStateAtom)
   const [currVal, set] = useRecoilState<IssueEditingState>(issueEditingStateAtom)
   const [createIssue, createResponse] = useMutation<CreateIssueResponse>(createIssueMutation)
   const [updateIssue, updateResponse] = useMutation<UpdateIssueResponse>(updateIssueMutation)
